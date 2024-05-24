@@ -1,0 +1,2 @@
+# SmartTrader
+Project for fun
