@@ -21,20 +21,25 @@ using var container = builder.Build();
 
 
 using (var scope = container.BeginLifetimeScope())
-    {
-        var service = scope.Resolve<IService>();
-        service.Execute();
-    }
+{
+    var service = scope.Resolve<IService>();
+    service.Execute(mainCts.Token);
+}
 
 public interface IService
 {
-    void Execute();
+    void Execute(CancellationToken cancellationToken);
 }
 
-public class Startup:IService
+public class Startup : IService
 {
-    public void Execute()
+    public void Execute(CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+
         Console.WriteLine("Hello, World!");
     }
-} 
+}
