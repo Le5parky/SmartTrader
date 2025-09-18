@@ -17,7 +17,7 @@ Console.CancelKeyPress += (sender, e) =>
 var builder = new ContainerBuilder();
 builder.RegisterType<Startup>().As<IService>();
 
-var container = builder.Build();
+using var container = builder.Build();
 
 
 using (var scope = container.BeginLifetimeScope())
