@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartTrader.Presentation.Ad
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartTrader.Worker", "src\SmartTrader.Worker\SmartTrader.Worker.csproj", "{4CE8103F-C8B6-4433-BC88-146C22C2825D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{26AB2884-F6E1-40B1-B75F-0CFDC144CF35}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmartTrader.IntegrationTests", "tests\SmartTrader.IntegrationTests\SmartTrader.IntegrationTests.csproj", "{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +89,18 @@ Global
 		{4CE8103F-C8B6-4433-BC88-146C22C2825D}.Release|x64.Build.0 = Release|Any CPU
 		{4CE8103F-C8B6-4433-BC88-146C22C2825D}.Release|x86.ActiveCfg = Release|Any CPU
 		{4CE8103F-C8B6-4433-BC88-146C22C2825D}.Release|x86.Build.0 = Release|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Debug|x64.Build.0 = Debug|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Debug|x86.Build.0 = Debug|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Release|x64.ActiveCfg = Release|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Release|x64.Build.0 = Release|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Release|x86.ActiveCfg = Release|Any CPU
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,5 +111,6 @@ Global
 		{1642537C-8515-4843-A7C0-F2BF37976C41} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{096AC7AC-F1E1-4338-B222-0936E55B5E9C} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{4CE8103F-C8B6-4433-BC88-146C22C2825D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{B93E13B2-07FC-4A74-91BB-5811FBE0FE26} = {26AB2884-F6E1-40B1-B75F-0CFDC144CF35}
 	EndGlobalSection
 EndGlobal

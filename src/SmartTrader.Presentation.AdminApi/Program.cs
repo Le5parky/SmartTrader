@@ -23,8 +23,8 @@ builder.Host.UseSerilog((context, services, configuration) =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks()
-    .AddNpgSql(builder.Configuration.GetConnectionString("CoreDatabase")!)
-    .AddNpgSql(builder.Configuration.GetConnectionString("MarketDatabase")!)
+    .AddNpgSql(builder.Configuration.GetConnectionString("CoreDatabase")!, name: "core-postgres")
+    .AddNpgSql(builder.Configuration.GetConnectionString("MarketDatabase")!, name: "market-postgres")
     .AddRedis(builder.Configuration.GetConnectionString("Redis")!);
 builder.Services.AddInfrastructure(builder.Configuration);
 

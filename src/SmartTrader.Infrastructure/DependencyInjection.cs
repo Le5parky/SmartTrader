@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using SmartTrader.Infrastructure.Persistence;
+using SmartTrader.Infrastructure.Persistence.Repositories;
 
 namespace SmartTrader.Infrastructure;
 
@@ -9,15 +11,12 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // PostgreSQL DbContexts
-        var coreConnection = configuration.GetConnectionString("CoreDatabase");
-        var marketConnection = configuration.GetConnectionString("MarketDatabase");
+        // Single database with multiple schemas (core, market)
+        var connectionString = configuration.GetConnectionString("CoreDatabase")
+                                ?? configuration.GetConnectionString("MarketDatabase");
 
-        services.AddDbContext<Persistence.CoreDbContext>(options =>
-            options.UseNpgsql(coreConnection));
-
-        services.AddDbContext<Persistence.MarketDbContext>(options =>
-            options.UseNpgsql(marketConnection));
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(connectionString));
 
         // Redis (shared multiplexer)
         var redisConnection = configuration.GetConnectionString("Redis");
@@ -25,6 +24,8 @@ public static class DependencyInjection
         {
             services.AddSingleton<IConnectionMultiplexer>(_ => ConnectionMultiplexer.Connect(redisConnection));
         }
+
+        services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
         return services;
     }
