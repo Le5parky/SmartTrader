@@ -1,0 +1,3 @@
+[submodule "SmartTrader"]
+	path = SmartTrader
+	url = ../SmartTrader.git
