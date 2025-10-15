@@ -13,10 +13,16 @@ RUN dotnet restore "src/SmartTrader.Presentation.AdminApi/SmartTrader.Presentati
 COPY . .
 WORKDIR "/src/src/SmartTrader.Presentation.AdminApi"
 RUN dotnet publish -c Release -o /app/publish /p:UseAppHost=false
+WORKDIR /src
+ENV PATH="${PATH}:/root/.dotnet/tools"
+RUN dotnet tool install --global dotnet-ef
+RUN mkdir -p /app/bundles
+RUN dotnet ef migrations bundle --project src/SmartTrader.Infrastructure/SmartTrader.Infrastructure.csproj --startup-project src/SmartTrader.Presentation.AdminApi/SmartTrader.Presentation.AdminApi.csproj --configuration Release --self-contained false --output /app/bundles/migrate --force --context AppDbContext
 
 FROM base AS final
 WORKDIR /app
 COPY --from=build /app/publish .
-ENTRYPOINT ["dotnet", "SmartTrader.Presentation.AdminApi.dll"]
-
-
+COPY --from=build /app/bundles/migrate ./migrate
+COPY src/SmartTrader.Presentation.AdminApi/docker-entrypoint.sh ./entrypoint.sh
+RUN chmod +x ./entrypoint.sh ./migrate
+ENTRYPOINT ["./entrypoint.sh"]

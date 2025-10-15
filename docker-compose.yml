@@ -41,6 +41,10 @@ services:
     environment:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__CoreDatabase: Host=postgres;Port=5432;Database=smarttrader_core;Username=postgres;Password=postgres
+      ConnectionStrings__MarketDatabase: Host=postgres;Port=5432;Database=smarttrader_market;Username=postgres;Password=postgres
+      ConnectionStrings__Redis: redis:6379,abortConnect=false
+      OpenTelemetry__Otlp__Endpoint: http://otel-collector:4317
     depends_on:
       postgres:
         condition: service_healthy
@@ -57,12 +61,18 @@ services:
       dockerfile: src/SmartTrader.Worker/Dockerfile
     environment:
       DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__CoreDatabase: Host=postgres;Port=5432;Database=smarttrader_core;Username=postgres;Password=postgres
+      ConnectionStrings__MarketDatabase: Host=postgres;Port=5432;Database=smarttrader_market;Username=postgres;Password=postgres
+      ConnectionStrings__Redis: redis:6379,abortConnect=false
+      OpenTelemetry__Otlp__Endpoint: http://otel-collector:4317
     depends_on:
       postgres:
         condition: service_healthy
       redis:
         condition: service_healthy
       otel-collector:
+        condition: service_started
+      adminapi:
         condition: service_started
 
 volumes:
