@@ -1,0 +1,97 @@
+# --- OS / General ---
+.DS_Store
+Thumbs.db
+*.log
+logs/
+*.tmp
+*.cache
+*.bak
+*.swp
+
+# --- User-specific files ---
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.rsuser
+*.vspscc
+*.vssscc
+*.DotSettings.user
+
+# --- IDE ---
+.vs/
+.vscode/
+.idea/
+*.sln.iml
+_ReSharper*/
+*.[Rr]e[Ss]harper
+_TeamCity*
+.ionide/
+
+# --- Build outputs ---
+[Bb]in/
+[Oo]bj/
+[Aa]rtifacts/
+TestResults/
+*.VisualState.xml
+*.pidb
+*.svclog
+*.pdb
+*.mdb
+
+# --- .NET / NuGet ---
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.nupkg
+*.snupkg
+*.nuspec
+packages/**
+!**/packages/build/
+!**/packages/repositories.config
+.nuget/NuGet.Config
+.nuget/NuGet.exe
+.nuget/packages.config
+
+# --- Coverage ---
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+*.opencover.xml
+*.cobertura.xml
+
+# --- Azure/Functions (if present) ---
+local.settings.json
+
+# --- Entity Framework ---
+*.jfm
+
+# --- NCrunch ---
+_NCrunch_*
+.*crunch*.local.xml
+
+# --- StyleCop ---
+StyleCop.Cache
+
+# --- Rider caches ---
+.idea/.idea.*
+
+# --- Environment / Secrets ---
+.env
+.env.*
+secrets.json
+appsettings.*.local.json
+
+# --- Node (if present) ---
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# --- Docker ---
+docker-compose.override.yml
+**/bin/Release/*/publish/
+
+
+
