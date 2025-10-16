@@ -19,8 +19,8 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new OutboxConfig());
         modelBuilder.ApplyConfiguration(new SymbolConfig());
         modelBuilder.ApplyConfiguration(new Candle1mConfig());
+        modelBuilder.ApplyConfiguration(new Candle5mConfig());
+        modelBuilder.ApplyConfiguration(new Candle15mConfig());
         modelBuilder.ApplyConfiguration(new IndicatorsCacheConfig());
     }
 }
-
-

@@ -1,4 +1,4 @@
-using SmartTrader.Worker;
+using SmartTrader.Worker.Workers;
 using Microsoft.Extensions.Hosting;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -8,7 +8,7 @@ using SmartTrader.Infrastructure;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.AddHostedService<Worker>();
+builder.Services.AddHostedService<BybitIngestionWorker>();
 
 // Serilog
 builder.Services.AddLogging();
@@ -52,3 +52,4 @@ builder.Services.AddOpenTelemetry()
 
 var host = builder.Build();
 host.Run();
+

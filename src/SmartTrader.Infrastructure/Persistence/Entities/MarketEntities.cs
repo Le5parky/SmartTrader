@@ -20,6 +20,28 @@ public class Candle1m
     public decimal Volume { get; set; }
 }
 
+public class Candle5m
+{
+    public Guid SymbolId { get; set; }
+    public DateTimeOffset TsOpen { get; set; }
+    public decimal Open { get; set; }
+    public decimal High { get; set; }
+    public decimal Low { get; set; }
+    public decimal Close { get; set; }
+    public decimal Volume { get; set; }
+}
+
+public class Candle15m
+{
+    public Guid SymbolId { get; set; }
+    public DateTimeOffset TsOpen { get; set; }
+    public decimal Open { get; set; }
+    public decimal High { get; set; }
+    public decimal Low { get; set; }
+    public decimal Close { get; set; }
+    public decimal Volume { get; set; }
+}
+
 public class IndicatorsCache
 {
     public Guid SymbolId { get; set; }
@@ -28,5 +50,6 @@ public class IndicatorsCache
     public DateTimeOffset CandleTs { get; set; }
     public string Values { get; set; } = null!;
 }
+
 
 
