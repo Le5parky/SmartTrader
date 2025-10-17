@@ -6,6 +6,7 @@ using SmartTrader.Trading.Abstractions.Models;
 using SmartTrader.Infrastructure.Persistence;
 using SmartTrader.Infrastructure.Persistence.Entities;
 using SmartTrader.Infrastructure.Persistence.Repositories;
+using SmartTrader.IntegrationTests.TestInfrastructure;
 using Testcontainers.PostgreSql;
 
 namespace SmartTrader.IntegrationTests;
@@ -28,7 +29,7 @@ public class CandleWriteRepositoryTests : IAsyncLifetime
 
     public async Task DisposeAsync() => await _container.DisposeAsync();
 
-    [Fact]
+[RequiresDockerFact]
     public async Task Upsert_IsIdempotent()
     {
         var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>()
@@ -53,5 +54,9 @@ public class CandleWriteRepositoryTests : IAsyncLifetime
         Assert.Equal(1, count);
     }
 }
+
+
+
+
 
 

@@ -1,8 +1,9 @@
 using DotNet.Testcontainers.Builders;
-using Testcontainers.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using SmartTrader.Infrastructure.Persistence;
 using Xunit;
+using SmartTrader.IntegrationTests.TestInfrastructure;
+using Testcontainers.PostgreSql;
 
 namespace SmartTrader.IntegrationTests;
 
@@ -30,7 +31,7 @@ public class DatabaseMigrationTests : IAsyncLifetime
         await _postgres.DisposeAsync();
     }
 
-    [Fact]
+    [RequiresDockerFact]
     public async Task ApplyMigrations_Succeeds()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
@@ -45,5 +46,7 @@ public class DatabaseMigrationTests : IAsyncLifetime
         Assert.Empty(pending);
     }
 }
+
+
 
 
