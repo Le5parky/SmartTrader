@@ -1,4 +1,5 @@
 using SmartTrader.Domain.MarketData;
+using SmartTrader.Trading.Abstractions.Models;
 
 namespace SmartTrader.Infrastructure.Persistence.Repositories;
 

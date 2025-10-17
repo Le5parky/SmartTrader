@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using SmartTrader.Domain.MarketData;
 using SmartTrader.Infrastructure.MarketData.Bybit.Internal;
 using SmartTrader.Infrastructure.MarketData.Bybit.Options;
+using SmartTrader.Trading.Abstractions.Models;
 
 namespace SmartTrader.Infrastructure.MarketData.Bybit.WebSocket;
 
@@ -154,24 +155,17 @@ internal sealed class BybitWebSocketClient : IBybitWebSocketClient
                             continue;
                         }
 
-                        if (!long.TryParse(entry.Start, NumberStyles.Integer, CultureInfo.InvariantCulture, out var startMs))
-                        {
-                            continue;
-                        }
-
                         static decimal ParseDecimal(string? value) => decimal.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsed) ? parsed : 0m;
 
                         var candle = new Candle(
-                            DateTimeOffset.FromUnixTimeMilliseconds(startMs),
+                            DateTimeOffset.FromUnixTimeMilliseconds(entry.Start.Value),
                             ParseDecimal(entry.Open),
                             ParseDecimal(entry.High),
                             ParseDecimal(entry.Low),
                             ParseDecimal(entry.Close),
                             ParseDecimal(entry.Volume));
 
-                        var isClosed = entry.Confirm?.Equals("true", StringComparison.OrdinalIgnoreCase) == true
-                                       || entry.Confirm?.Equals("1", StringComparison.Ordinal) == true
-                                       || entry.Confirm?.Equals("True", StringComparison.Ordinal) == true;
+                        var isClosed = entry.Confirm ?? false;
 
                         if (!writer.TryWrite(new CandleEvent(candle, isClosed)))
                         {

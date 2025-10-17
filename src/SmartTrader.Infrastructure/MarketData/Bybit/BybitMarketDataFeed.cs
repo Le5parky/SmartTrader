@@ -5,6 +5,7 @@ using SmartTrader.Infrastructure.MarketData.Bybit.Internal;
 using SmartTrader.Infrastructure.MarketData.Bybit.Options;
 using SmartTrader.Infrastructure.MarketData.Bybit.Rest;
 using SmartTrader.Infrastructure.MarketData.Bybit.WebSocket;
+using SmartTrader.Trading.Abstractions.Models;
 
 namespace SmartTrader.Infrastructure.MarketData.Bybit;
 

@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using SmartTrader.Domain.MarketData;
 using SmartTrader.Infrastructure.MarketData.Bybit.Internal;
 using SmartTrader.Infrastructure.MarketData.Bybit.Options;
+using SmartTrader.Trading.Abstractions.Models;
 
 namespace SmartTrader.Infrastructure.MarketData.Bybit.Rest;
 

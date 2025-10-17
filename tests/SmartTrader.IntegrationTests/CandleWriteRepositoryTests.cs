@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Logging.Abstractions;
 using SmartTrader.Domain.MarketData;
+using SmartTrader.Trading.Abstractions.Models;
 using SmartTrader.Infrastructure.Persistence;
 using SmartTrader.Infrastructure.Persistence.Entities;
 using SmartTrader.Infrastructure.Persistence.Repositories;

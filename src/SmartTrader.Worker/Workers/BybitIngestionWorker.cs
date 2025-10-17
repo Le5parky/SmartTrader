@@ -1,3 +1,4 @@
+using SmartTrader.Worker.Strategies;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.Metrics;
@@ -9,6 +10,7 @@ using Microsoft.Extensions.Options;
 using SmartTrader.Domain.MarketData;
 using SmartTrader.Infrastructure.MarketData.Bybit.Options;
 using SmartTrader.Infrastructure.Persistence.Repositories;
+using SmartTrader.Trading.Abstractions.Models;
 using StackExchange.Redis;
 
 namespace SmartTrader.Worker.Workers;
@@ -25,6 +27,7 @@ public sealed class BybitIngestionWorker : BackgroundService
     private readonly SemaphoreSlim _restGate;
     private readonly IDatabase? _redis;
     private readonly ConcurrentDictionary<(string Symbol, Timeframe Timeframe), KeyValuePair<string, object?>[]> _tagCache = new();
+    private readonly StrategyEngine? _strategyEngine;
 
     public BybitIngestionWorker(
         IMarketDataFeed feed,
@@ -33,7 +36,8 @@ public sealed class BybitIngestionWorker : BackgroundService
         IOptions<BybitOptions> options,
         ILogger<BybitIngestionWorker> logger,
         IMeterFactory meterFactory,
-        IConnectionMultiplexer? connectionMultiplexer = null)
+        IConnectionMultiplexer? connectionMultiplexer = null,
+        StrategyEngine? strategyEngine = null)
     {
         _feed = feed;
         _writeRepository = writeRepository;
@@ -42,6 +46,7 @@ public sealed class BybitIngestionWorker : BackgroundService
         _options = options.Value;
         _restGate = new SemaphoreSlim(Math.Max(1, _options.Rest.MaxConcurrency));
         _redis = connectionMultiplexer?.GetDatabase();
+        _strategyEngine = strategyEngine;
 
         var meter = meterFactory.Create(new MeterOptions("SmartTrader.Bybit.Ingestion")
         {
@@ -189,6 +194,11 @@ public sealed class BybitIngestionWorker : BackgroundService
     private async Task PersistClosedCandleAsync(string symbol, Timeframe timeframe, Candle candle, CancellationToken cancellationToken)
     {
         await _writeRepository.UpsertAsync(symbol, timeframe, new[] { candle }, cancellationToken).ConfigureAwait(false);
+        if (_strategyEngine is not null)
+        {
+            var closeTimestamp = candle.TsOpenUtc + timeframe.ToTimeSpan();
+            await _strategyEngine.EvaluateAsync(symbol, timeframe, closeTimestamp, cancellationToken).ConfigureAwait(false);
+        }
         var tags = TagsFor(symbol, timeframe);
         _candlesIngested.Add(1, tags);
         _ingestLatency.Record((DateTimeOffset.UtcNow - candle.TsOpenUtc).TotalMilliseconds, tags);
@@ -231,6 +241,8 @@ public sealed class BybitIngestionWorker : BackgroundService
         });
     }
 }
+
+
 
 
 

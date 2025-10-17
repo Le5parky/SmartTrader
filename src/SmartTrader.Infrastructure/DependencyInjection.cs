@@ -7,6 +7,8 @@ using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
 using StackExchange.Redis;
+using SmartTrader.Infrastructure.MarketData;
+using SmartTrader.Trading.Abstractions.Indicators;
 using SmartTrader.Domain.MarketData;
 using SmartTrader.Infrastructure.MarketData.Bybit;
 using SmartTrader.Infrastructure.MarketData.Bybit.Internal;
@@ -26,10 +28,9 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("CoreDatabase")
                                 ?? configuration.GetConnectionString("MarketDatabase");
 
-        services.AddDbContext<AppDbContext>(options =>
-            options.UseNpgsql(connectionString));
         services.AddDbContextFactory<AppDbContext>(options =>
             options.UseNpgsql(connectionString));
+        services.AddScoped(sp => sp.GetRequiredService<IDbContextFactory<AppDbContext>>().CreateDbContext());
 
         // Redis (shared multiplexer)
         var redisConnection = configuration.GetConnectionString("Redis");
@@ -39,10 +40,17 @@ public static class DependencyInjection
         }
 
         services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
-        services.AddScoped<ICandleWriteRepository, CandleWriteRepository>();
-        services.AddScoped<ICandleReadRepository, CandleReadRepository>();
+        services.AddSingleton<ICandleReadRepository, CandleReadRepository>();
+        services.AddSingleton<ICandleWriteRepository>(sp =>
+        {
+            var factory = sp.GetRequiredService<IDbContextFactory<AppDbContext>>();
+            var logger = sp.GetRequiredService<ILogger<CandleWriteRepository>>();
+            var cache = sp.GetService<IIndicatorCache>();
+            return new CandleWriteRepository(factory, logger, cache);
+        });
+        services.AddSingleton<ICandleHistorySource, CandleHistorySource>();
 
-services.AddSingleton<IValidateOptions<BybitOptions>, BybitOptionsValidator>();
+        services.AddSingleton<IValidateOptions<BybitOptions>, BybitOptionsValidator>();
         services.AddOptions<BybitOptions>()
             .Configure(options => configuration.GetSection(BybitOptions.SectionName).Bind(options))
             .ValidateOnStart();
@@ -95,6 +103,8 @@ services.AddSingleton<IValidateOptions<BybitOptions>, BybitOptionsValidator>();
         return services;
     }
 }
+
+
 
 
 

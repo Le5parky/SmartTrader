@@ -8,6 +8,8 @@ using Microsoft.Extensions.Logging;
 using Npgsql;
 using SmartTrader.Domain.MarketData;
 using SmartTrader.Infrastructure.Persistence.Entities;
+using SmartTrader.Trading.Abstractions.Indicators;
+using SmartTrader.Trading.Abstractions.Models;
 
 namespace SmartTrader.Infrastructure.Persistence.Repositories;
 
@@ -17,12 +19,17 @@ public sealed class CandleWriteRepository : ICandleWriteRepository
 
     private readonly IDbContextFactory<AppDbContext> _contextFactory;
     private readonly ILogger<CandleWriteRepository> _logger;
+    private readonly IIndicatorCache? _indicatorCache;
     private readonly ConcurrentDictionary<string, Guid> _symbolCache = new(StringComparer.OrdinalIgnoreCase);
 
-    public CandleWriteRepository(IDbContextFactory<AppDbContext> contextFactory, ILogger<CandleWriteRepository> logger)
+    public CandleWriteRepository(
+        IDbContextFactory<AppDbContext> contextFactory,
+        ILogger<CandleWriteRepository> logger,
+        IIndicatorCache? indicatorCache = null)
     {
         _contextFactory = contextFactory;
         _logger = logger;
+        _indicatorCache = indicatorCache;
     }
 
     public async Task UpsertAsync(string symbol, Timeframe timeframe, IReadOnlyList<Candle> candles, CancellationToken cancellationToken)
@@ -53,6 +60,17 @@ public sealed class CandleWriteRepository : ICandleWriteRepository
         }
 
         await dbTransaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+
+        if (_indicatorCache is not null)
+        {
+            var tfLabel = timeframe.ToLabel();
+            var closeOffset = timeframe.ToTimeSpan();
+            foreach (var candle in candles)
+            {
+                var closeTimestamp = candle.TsOpenUtc + closeOffset;
+                await _indicatorCache.InvalidateAsync(symbol, tfLabel, closeTimestamp, cancellationToken).ConfigureAwait(false);
+            }
+        }
 
         if (_logger.IsEnabled(LogLevel.Debug))
         {
@@ -168,6 +186,7 @@ public sealed class CandleWriteRepository : ICandleWriteRepository
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 }
+
 
 
 

@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace SmartTrader.Infrastructure.MarketData.Bybit.WebSocket;
@@ -35,10 +37,12 @@ internal sealed class BybitWsEnvelope
 internal sealed class BybitWsKline
 {
     [JsonPropertyName("start")]
-    public string? Start { get; set; }
+    [JsonConverter(typeof(BybitFlexibleLongConverter))]
+    public long? Start { get; set; }
 
     [JsonPropertyName("end")]
-    public string? End { get; set; }
+    [JsonConverter(typeof(BybitFlexibleLongConverter))]
+    public long? End { get; set; }
 
     [JsonPropertyName("interval")]
     public string? Interval { get; set; }
@@ -59,8 +63,84 @@ internal sealed class BybitWsKline
     public string? Volume { get; set; }
 
     [JsonPropertyName("confirm")]
-    public string? Confirm { get; set; }
+    [JsonConverter(typeof(BybitFlexibleBoolConverter))]
+    public bool? Confirm { get; set; }
 
     [JsonPropertyName("timestamp")]
-    public string? Timestamp { get; set; }
+    [JsonConverter(typeof(BybitFlexibleLongConverter))]
+    public long? Timestamp { get; set; }
+}
+
+internal sealed class BybitFlexibleLongConverter : JsonConverter<long?>
+{
+    public override long? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        return reader.TokenType switch
+        {
+            JsonTokenType.Null => null,
+            JsonTokenType.Number when reader.TryGetInt64(out var number) => number,
+            JsonTokenType.String when long.TryParse(reader.GetString(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed) => parsed,
+            _ => null
+        };
+    }
+
+    public override void Write(Utf8JsonWriter writer, long? value, JsonSerializerOptions options)
+    {
+        if (value is null)
+        {
+            writer.WriteNullValue();
+        }
+        else
+        {
+            writer.WriteNumberValue(value.Value);
+        }
+    }
+}
+
+internal sealed class BybitFlexibleBoolConverter : JsonConverter<bool?>
+{
+    public override bool? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        return reader.TokenType switch
+        {
+            JsonTokenType.Null => null,
+            JsonTokenType.True => true,
+            JsonTokenType.False => false,
+            JsonTokenType.String => ParseString(reader.GetString()),
+            JsonTokenType.Number => reader.TryGetInt64(out var number) ? number != 0 : (bool?)null,
+            _ => null
+        };
+    }
+
+    private static bool? ParseString(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        if (bool.TryParse(value, out var boolean))
+        {
+            return boolean;
+        }
+
+        if (long.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number))
+        {
+            return number != 0;
+        }
+
+        return null;
+    }
+
+    public override void Write(Utf8JsonWriter writer, bool? value, JsonSerializerOptions options)
+    {
+        if (value is null)
+        {
+            writer.WriteNullValue();
+        }
+        else
+        {
+            writer.WriteBooleanValue(value.Value);
+        }
+    }
 }

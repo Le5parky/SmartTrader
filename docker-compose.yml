@@ -45,6 +45,22 @@ services:
       ConnectionStrings__MarketDatabase: Host=postgres;Port=5432;Database=smarttrader_market;Username=postgres;Password=postgres
       ConnectionStrings__Redis: redis:6379,abortConnect=false
       OpenTelemetry__Otlp__Endpoint: http://otel-collector:4317
+      Bybit__BaseUrl: https://api.bybit.com
+      Bybit__WsUrl: wss://stream.bybit.com/v5/public/linear
+      Bybit__Symbols__0: BTCUSDT
+      Bybit__Symbols__1: ETHUSDT
+      Bybit__Timeframes__0: 1m
+      Bybit__Timeframes__1: 5m
+      Bybit__Timeframes__2: 15m
+      Bybit__Rest__TimeoutSec: 10
+      Bybit__Rest__PageSize: 1000
+      Bybit__Rest__BackfillDays: 90
+      Bybit__Rest__MaxConcurrency: 2
+      Bybit__RateLimit__RequestsPerMinute: 60
+      Bybit__RateLimit__BurstSize: 10
+      Bybit__Ws__ReconnectBaseMs: 500
+      Bybit__Ws__ReconnectMaxMs: 10000
+      Bybit__Ws__HeartbeatMs: 20000
     depends_on:
       postgres:
         condition: service_healthy
@@ -65,6 +81,22 @@ services:
       ConnectionStrings__MarketDatabase: Host=postgres;Port=5432;Database=smarttrader_market;Username=postgres;Password=postgres
       ConnectionStrings__Redis: redis:6379,abortConnect=false
       OpenTelemetry__Otlp__Endpoint: http://otel-collector:4317
+      Bybit__BaseUrl: https://api.bybit.com
+      Bybit__WsUrl: wss://stream.bybit.com/v5/public/linear
+      Bybit__Symbols__0: BTCUSDT
+      Bybit__Symbols__1: ETHUSDT
+      Bybit__Timeframes__0: 1m
+      Bybit__Timeframes__1: 5m
+      Bybit__Timeframes__2: 15m
+      Bybit__Rest__TimeoutSec: 10
+      Bybit__Rest__PageSize: 1000
+      Bybit__Rest__BackfillDays: 90
+      Bybit__Rest__MaxConcurrency: 2
+      Bybit__RateLimit__RequestsPerMinute: 60
+      Bybit__RateLimit__BurstSize: 10
+      Bybit__Ws__ReconnectBaseMs: 500
+      Bybit__Ws__ReconnectMaxMs: 10000
+      Bybit__Ws__HeartbeatMs: 20000
     depends_on:
       postgres:
         condition: service_healthy

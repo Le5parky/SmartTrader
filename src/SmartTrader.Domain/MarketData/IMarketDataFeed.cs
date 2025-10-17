@@ -1,3 +1,5 @@
+using SmartTrader.Trading.Abstractions.Models;
+
 namespace SmartTrader.Domain.MarketData;
 
 public interface IMarketDataFeed
