@@ -1,0 +1,6 @@
+@CryptoTrader.Presentation.AdminApi_HostAddress = http://localhost:5016
+
+GET {{CryptoTrader.Presentation.AdminApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
