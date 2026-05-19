@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\CryptoTrader.Infrastructure\CryptoTrader.Infrastructure.csproj" />
+    <ProjectReference Include="..\CryptoTrader.Application\CryptoTrader.Application.csproj" />
+    <ProjectReference Include="..\CryptoTrader.Domain\CryptoTrader.Domain.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

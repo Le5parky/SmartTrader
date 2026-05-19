@@ -1,2 +1,2 @@
-# SmartTrader
+# CryptoTrader
 Project for fun
