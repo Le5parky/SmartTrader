@@ -1,81 +1,42 @@
 version: "3.9"
 services:
-  postgres:
-    image: postgres:16
+  crypto-db:
+    image: postgres:16-alpine
+    container_name: crypto_trader_db
+    restart: always
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: trader_admin
+      POSTGRES_PASSWORD: SecretSecurePassword123!
+      POSTGRES_DB: cryptotrader_db
     volumes:
       - pgdata:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  redis:
-    image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "5454:5432"
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ["CMD-SHELL", "pg_isready -U trader_admin -d cryptotrader_db"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  otel-collector:
-    image: otel/opentelemetry-collector:0.110.0
-    command: ["--config=/etc/otel-collector-config.yaml"]
+  crypto-app:
+    build:
+      context: .
+      dockerfile: src/CryptoTrader.Main/Dockerfile
+    container_name: crypto_trader_app
+    restart: always
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_HTTP_PORTS=8080
+      - TZ=Europe/Kiev
+      - ConnectionStrings__DefaultConnection=Host=crypto-db;Port=5432;Database=cryptotrader_db;Username=trader_admin;Password=SecretSecurePassword123!;
+    ports:
+      - "8888:8080"
     volumes:
-      - ./ops/otel-collector-config.yaml:/etc/otel-collector-config.yaml:ro
-    ports:
-      - "4317:4317"
-      - "4318:4318"
-
-  adminapi:
-    build:
-      context: .
-      dockerfile: src/CryptoTrader.Presentation.AdminApi/Dockerfile
-    environment:
-      ASPNETCORE_URLS: http://+:8080
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__CoreDatabase: Host=postgres;Port=5432;Database=smarttrader_core;Username=postgres;Password=postgres
-      ConnectionStrings__MarketDatabase: Host=postgres;Port=5432;Database=smarttrader_market;Username=postgres;Password=postgres
-      ConnectionStrings__Redis: redis:6379,abortConnect=false
-      OpenTelemetry__Otlp__Endpoint: http://otel-collector:4317
+      - ./config:/app/config
+      - ./logs:/app/logs
     depends_on:
-      postgres:
+      crypto-db:
         condition: service_healthy
-      redis:
-        condition: service_healthy
-      otel-collector:
-        condition: service_started
-    ports:
-      - "8080:8080"
-
-  worker:
-    build:
-      context: .
-      dockerfile: src/CryptoTrader.Worker/Dockerfile
-    environment:
-      DOTNET_ENVIRONMENT: Development
-      ConnectionStrings__CoreDatabase: Host=postgres;Port=5432;Database=smarttrader_core;Username=postgres;Password=postgres
-      ConnectionStrings__MarketDatabase: Host=postgres;Port=5432;Database=smarttrader_market;Username=postgres;Password=postgres
-      ConnectionStrings__Redis: redis:6379,abortConnect=false
-      OpenTelemetry__Otlp__Endpoint: http://otel-collector:4317
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-      otel-collector:
-        condition: service_started
-      adminapi:
-        condition: service_started
 
 volumes:
   pgdata:
-
-
