@@ -37,7 +37,7 @@ services:
   adminapi:
     build:
       context: .
-      dockerfile: src/SmartTrader.Presentation.AdminApi/Dockerfile
+      dockerfile: src/CryptoTrader.Presentation.AdminApi/Dockerfile
     environment:
       ASPNETCORE_URLS: http://+:8080
       ASPNETCORE_ENVIRONMENT: Development
@@ -58,7 +58,7 @@ services:
   worker:
     build:
       context: .
-      dockerfile: src/SmartTrader.Worker/Dockerfile
+      dockerfile: src/CryptoTrader.Worker/Dockerfile
     environment:
       DOTNET_ENVIRONMENT: Development
       ConnectionStrings__CoreDatabase: Host=postgres;Port=5432;Database=smarttrader_core;Username=postgres;Password=postgres
